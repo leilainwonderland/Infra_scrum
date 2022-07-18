@@ -1,4 +1,8 @@
+import type { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
+import { User } from './models/users.model.js';
+
+let userRepository: Repository<User>;
 
 const initDatabase = async () => {
   const connect = new DataSource({
@@ -13,10 +17,11 @@ const initDatabase = async () => {
   });
   try {
     await connect.initialize();
+    userRepository = connect.getRepository(User);
     console.log('Connect to db successfully');
   } catch (e) {
     console.error(e);
   };
 };
 
-export { initDatabase };
+export { initDatabase, userRepository };
