@@ -17,5 +17,10 @@
         },
         "editor.suggest.insertMode": "replace",
         "editor.bracketPairColorization.enabled": true
-    }
+    },
+    "js/ts.implicitProjectConfig.experimentalDecorators": true,
+    "js/ts.implicitProjectConfig.checkJs": false,
+    "json.schemas": [
+    
+    ]
 }
