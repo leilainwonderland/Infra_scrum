@@ -1,7 +1,7 @@
 {
-  "name": "hitw_boilerplate_ts_node",
+  "name": "Infra_Scrum",
   "version": "0.0.1",
-  "description": "boilerplate for hack in the wood 2022 ",
+  "description": "boilerplate for Infra_scrum",
   "main": "index.ts",
   "scripts": {
     "start:dev": "NODE_ENV=development nodemon --watch './src/**/*.ts' --exec 'node --loader ts-node/esm' ./src/application.bootstrap.ts",
