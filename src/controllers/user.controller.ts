@@ -1,7 +1,10 @@
-import { Request, Response } from "express";
+import type { Request, Response } from 'express';
+import { userRepository } from '../application.database.js';
 
-const login = (req:Request, res:Response) => {
-    console.log(req.body);
-}
+const login = async (req:Request, res:Response) => {
+  const user = userRepository.create(req.body);
+  await userRepository.save(user);
+  res.json({ user });
+};
 
 export { login };
