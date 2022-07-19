@@ -14,9 +14,7 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
 
   if (user && await user!.verifyPassword(req.body.password)) {
     const jwtToken = sign(
-      {
-        data: user.id,
-      },
+      { data: user.id },
       process.env.JWT_SECRET || 'lesfullstacksontlesbest',
     );
     return res.json({ jwtToken });
@@ -27,4 +25,12 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
   next(err);
 };
 
-export { login };
+const getDataUser = async (req: Request, res: Response) => {
+  const user = await userRepository.findOneBy({
+    id: +`${req.query.id}`,
+    // id: 1,
+  });
+  res.status(200).json(user);
+};
+
+export { login, getDataUser };
