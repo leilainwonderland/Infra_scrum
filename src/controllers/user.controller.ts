@@ -2,9 +2,18 @@ import type { Request, Response } from 'express';
 import { userRepository } from '../application.database.js';
 
 const addUser = async (req:Request, res:Response) => {
-  const user = userRepository.create(req.body);
-  await userRepository.save(user);
-  res.json({ user });
+  try {
+    const user = userRepository.create(req.body);
+    await userRepository.save(user);
+    res.json({ user });
+  } catch (e) {
+    res.status(406).json({ error: 'invalid request' });
+  }
 };
 
-export { addUser };
+const getDataUser = async (req: Request, res: Response) => {
+  console.log('getDataUser');
+  res.json({ res: 'ok' });
+};
+
+export { addUser, getDataUser };

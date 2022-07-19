@@ -10,9 +10,7 @@ import { BaseModel } from './base.model.js';
 @Entity()
 
 export class User extends BaseModel {
-    // @Column('varchar', { length: 125, unique: true })
-    // public username!: string;
-    
+
     @Column('varchar', { length: 254, unique: true })
     public email!: string;
 
@@ -28,14 +26,8 @@ export class User extends BaseModel {
     @Column('varchar', { length: 35 })
     public lastName!: string;
 
-    // @Column('varchar', { length: 35 })
-    // public birthDate?: Date;
-
     @Column('varchar', { length: 35 })
     public role?: string;
-
-    // @Column('varchar', { length: 35 })
-    // public ville?: string;
 
     @Column('varchar', { length: 15 })
     public tel!: string;
