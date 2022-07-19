@@ -13,7 +13,12 @@ const addUser = async (req:Request, res:Response) => {
 
 const getDataUser = async (req: Request, res: Response) => {
   console.log('getDataUser');
-  res.json({ res: 'ok' });
+  console.log(req.query.id);
+
+  // const userData = await userRepository.findOneBy({
+  //   id: req.query.id,
+  // });
+  // res.json({ res: userData });
 };
 
 export { addUser, getDataUser };
