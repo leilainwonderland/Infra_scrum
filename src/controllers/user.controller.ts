@@ -1,10 +1,24 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { userRepository } from '../application.database.js';
+import type { HttpError } from '../middlewares/error.middleware.js';
 
-const login = async (req:Request, res:Response) => {
-  const user = userRepository.create(req.body);
-  await userRepository.save(user);
-  res.json({ user });
+const addUser = async (req:Request, res:Response, next: NextFunction) => {
+  const user = await userRepository.findOneBy({
+    email: req.body.email,
+  });
+  if (user) {
+    const err = new Error() as HttpError;
+    err.message = 'invalid request';
+    err.status = 406;
+    return next(err);
+  }
+  try {
+    const user = userRepository.create(req.body);
+    await userRepository.save(user);
+    res.status(201).json(user);
+  } catch (e) {
+    console.log(e);
+  }
 };
 
-export { login };
+export { addUser };
