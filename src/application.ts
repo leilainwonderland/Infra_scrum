@@ -11,7 +11,7 @@ const createApp = ():express.Application => {
   app.use(json());
   // ENTER YOUR ROUTES HERE
   app.use(userRouter);
-  app.use(projectRouter)
+  app.use(projectRouter);
   return app;
 };
 

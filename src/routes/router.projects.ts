@@ -5,5 +5,4 @@ const projectRouter: Router = Router();
 
 projectRouter.post('/new_projects', addprojects);
 
-
 export { projectRouter };
