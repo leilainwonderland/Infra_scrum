@@ -5,7 +5,7 @@ import { authotized } from '../middlewares/autorized.middleware.js';
 
 const router: Router = Router();
 
-router.post('/users', addUser);
+router.post('/new_user', addUser);
 router.post('/login', login);
 router.get('/home', authotized, getDataUser);
 
