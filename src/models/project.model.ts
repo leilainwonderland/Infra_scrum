@@ -14,7 +14,13 @@ export class Projects extends BaseModel {
   public description?: string;
 
   @Column()
-    public priority!: string;
+    public startDate!: Date;
+
+  @Column()
+  public endDate!: Date;
+
+  @Column()
+  public priority!: string;
 
     @Column()
   public status!: string;

@@ -20,7 +20,13 @@ public status!: string;
     public taskDescription?: string;
 
     @Column()
-    public options!: string;
+    public priority!: string;
+
+    @Column()
+    public startDate!: Date;
+
+    @Column()
+    public endDate!: Date;
 
     @Column()
     public roles!: string;
