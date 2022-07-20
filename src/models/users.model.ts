@@ -4,8 +4,9 @@
 /* eslint-disable indent */
 /* eslint-disable no-trailing-spaces */
 import { compare, hash } from 'bcrypt';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model.js';
+import { Project } from './projects.model.js';
 
 @Entity()
 
@@ -13,6 +14,9 @@ export class User extends BaseModel {
 
     @Column('varchar', { length: 254, unique: true })
     public email!: string;
+
+    @Column('varchar', { length: 35 })
+    public city!: string;
 
     @Column('varchar')
     public password!: string;
@@ -34,6 +38,7 @@ export class User extends BaseModel {
     
     @Column('varchar', { length: 250 })
     public img: string = 'https://64.media.tumblr.com/57f55afee7406c89ae445a428de5af12/tumblr_nn6od9rYpQ1r4xjo2o1_250.gifv';
+
     
     @BeforeInsert()
     async hashPassword () {
@@ -43,5 +48,9 @@ export class User extends BaseModel {
 
     public verifyPassword (password: string): Promise<boolean> {
       return compare(password, this.password);
+
     }
+
+    @OneToMany(() => Project, (project) => project.user)
+    public projects?:Project[]; 
 };
