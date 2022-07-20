@@ -33,4 +33,7 @@ public status!: string;
 
     @Column()
     public assign!: string;
+
+  // @ManyToOne('Projects', 'tasks')
+  // public project!: Projects;
 };

@@ -1,17 +1,15 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseModel } from './base.model.js';
+import type { User } from './users.model.js';
 
 @Entity()
 
-export class Projects extends BaseModel {
+export class Project extends BaseModel {
     @Column('varchar', { length: 35 })
   public name!: string;
 
-  @Column()
-    public options!: string;
-
     @Column('varchar', { length: 250 })
-  public description?: string;
+    public description?: string;
 
   @Column()
     public startDate!: Date;
@@ -25,6 +23,9 @@ export class Projects extends BaseModel {
     @Column()
   public status!: string;
 
-    @Column('varchar', { unique: true })
-    public userId!: number;
+    // @Column('varchar', { unique: true })
+    // public userCreator!: number;
+
+   @ManyToOne('User', 'projects')
+    public user?:User;
 }
