@@ -7,6 +7,6 @@ const router: Router = Router();
 
 router.post('/new_user', addUser);
 router.post('/login', login);
-router.get('/home', authotized, getDataUser);
+router.get('/home/:id', authotized, getDataUser);
 
 export { router };

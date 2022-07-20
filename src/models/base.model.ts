@@ -3,7 +3,7 @@ import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, DeleteDateC
 
 export class BaseModel {
     @PrimaryGeneratedColumn('increment')
-  public id!: number;
+  public id!: string;
   
     @CreateDateColumn()
     public createdAt!: Date;
