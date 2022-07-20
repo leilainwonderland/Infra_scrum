@@ -1,8 +1,10 @@
 import type { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
+import { Projects } from './models/project.model.js';
 import { User } from './models/users.model.js';
 
 let userRepository: Repository<User>;
+let projectRepository: Repository<Projects>;
 
 const initDatabase = async () => {
   const connect = new DataSource({
@@ -18,10 +20,11 @@ const initDatabase = async () => {
   try {
     await connect.initialize();
     userRepository = connect.getRepository(User);
+    projectRepository = connect.getRepository(Projects);
     console.log('Connect to db successfully');
   } catch (e) {
     console.error(e);
   };
 };
 
-export { initDatabase, userRepository };
+export { initDatabase, userRepository, projectRepository };

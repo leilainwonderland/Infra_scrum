@@ -3,10 +3,10 @@ import { getDataUser, login } from '../controllers/login.controller.js';
 import { addUser } from '../controllers/user.controller.js';
 import { authotized } from '../middlewares/autorized.middleware.js';
 
-const router: Router = Router();
+const userRouter: Router = Router();
 
-router.post('/new_user', addUser);
-router.post('/login', login);
-router.get('/home/:id', authotized, getDataUser);
+userRouter.post('/new_user', addUser);
+userRouter.post('/login', login);
+userRouter.get('/home/:id', authotized, getDataUser);
 
-export { router };
+export { userRouter };
