@@ -53,4 +53,9 @@ export class User extends BaseModel {
 
     @OneToMany(() => Project, (project) => project.user)
     public projects?:Project[]; 
+    // @OneToMany('Project', 'user')
+    // public projects?:Project[]; 
+
+    // @OneToMany(() => Todo, (todo) => todo.user)
+    // public todos?:Todo[];
 };

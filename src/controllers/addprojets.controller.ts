@@ -11,6 +11,7 @@ const addprojects = async (req:Request, res:Response) => {
   console.log(userId);
   const user = await userRepository.findOneBy({ id: userId });
   req.body.userCreator = user!.id;
+  // req.body.project = [user];
   try {
     const project = projectRepository.create(req.body);
     await projectRepository.save(project);

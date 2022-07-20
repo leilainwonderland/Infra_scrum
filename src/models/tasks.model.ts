@@ -17,7 +17,7 @@ public status!: string;
     public userId!: number;
 
     @Column('varchar', { length: 250 })
-    public taskDescription?: string;
+    public description?: string;
 
     @Column()
     public priority!: string;

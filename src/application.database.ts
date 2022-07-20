@@ -25,6 +25,9 @@ const initDatabase = async () => {
   } catch (e) {
     console.error(e);
   };
+
+  const userData = await userRepository.findOneBy({ id: '1' });
+  console.log(userData);
 };
 
 export { initDatabase, userRepository, projectRepository };
