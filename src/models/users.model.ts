@@ -6,7 +6,7 @@
 import { compare, hash } from 'bcrypt';
 import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model.js';
-import { Project } from './projects.model.js';
+import type { Project } from './projects.model.js';
 
 @Entity()
 
@@ -14,14 +14,14 @@ export class User extends BaseModel {
 
     @Column('varchar', { length: 254, unique: true })
     public email!: string;
+    
+    @Column('varchar')
+    public password!: string;
 
     @Column('varchar', { length: 35 })
     public city!: string;
 
-    @Column('varchar')
-    public password!: string;
-
-    @Column()
+    @Column('boolean')
     public status: boolean = false;
 
     @Column('varchar', { length: 35 })
@@ -48,14 +48,8 @@ export class User extends BaseModel {
 
     public verifyPassword (password: string): Promise<boolean> {
       return compare(password, this.password);
-
     }
 
-    @OneToMany(() => Project, (project) => project.user)
-    public projects?:Project[]; 
-    // @OneToMany('Project', 'user')
-    // public projects?:Project[]; 
-
-    // @OneToMany(() => Todo, (todo) => todo.user)
-    // public todos?:Todo[];
+    @OneToMany('Project', 'project')
+    public projects?:Project[];
 };

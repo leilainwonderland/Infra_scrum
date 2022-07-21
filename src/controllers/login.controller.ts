@@ -27,9 +27,7 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
 
 const getDataUser = async (req: Request, res: Response) => {
   const user = await userRepository.findOneBy({
-    // id: +`${req.params.id}`,
-    id: req.params.id,
-    // id: 1,
+    id: parseInt(req.params.id),
   });
   res.status(200).json(user);
 };

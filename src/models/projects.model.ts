@@ -23,12 +23,9 @@ export class Project extends BaseModel {
     @Column()
   public status!: string;
 
-  @Column('varchar')
-    public userCreator!: string;
+  @Column()
+    public userCreator!: number;
 
    @ManyToOne('User', 'projects')
   public user!:User;
-
-  // @ManyToOne(() => User, (user) => user.todos)
-  // public user?:User;
 }
