@@ -6,7 +6,7 @@ const projectRouter: Router = Router();
 
 projectRouter.post('/user/:id/new_projects', authotized, addprojects);
 // projectRouter.get('/user/:id/projects', authotized, getProjects);
-// projectRouter.patch('/user/:id/patch_projects/:id', authotized, patchProjects);
-projectRouter.delete('/user/:id/delete_projects/:id', authotized, deleteProjects);
+// projectRouter.patch('patch_projects/:id', authotized, patchProjects);
+projectRouter.delete('/delete_projects/:id', authotized, deleteProjects);
 
 export { projectRouter };

@@ -2,10 +2,8 @@
 
 ## to get me started
 
->## bash ./refresh.docker.bash
->## docker start <CONTAINER_ID>
 >## pnpm i
->## pnpm run:dev
+>## bash ./refresh.docker.bash
 >## bash ./add.data.database.bash
 
 ## Random data to populate the user table
