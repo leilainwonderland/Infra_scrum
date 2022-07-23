@@ -16,22 +16,29 @@ const initDatabase = async () => {
     database: 'db_test',
     entities: ['src/models/*.ts'],
     synchronize: true,
+    logging: false,
   });
   try {
     await connect.initialize();
-    userRepository = connect.getRepository(User);
-    projectRepository = connect.getRepository(Project);
+    userRepository = connect
+      .getRepository(User);
+    projectRepository = connect
+      .getRepository(Project);
     console.log('Connect to db successfully');
   } catch (e) {
     console.error(e);
   };
 
-  const projectData = await projectRepository.find({
-    where: {
-      user: true,
-    },
-  });
-  console.log(projectData);
+  // DON 'T DELETE
+//   const projectData = await projectRepository.find({
+//     where: {
+//       user: {
+//         id: 6,
+//       },
+//     },
+//     relations: ['user'],
+//   });
+//   console.log(projectData);
 };
 
 export { initDatabase, userRepository, projectRepository };

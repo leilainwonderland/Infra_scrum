@@ -8,11 +8,9 @@ export class BaseModel {
     @CreateDateColumn()
     public createdAt!: Date;
 
-    // eslint-disable-next-line no-undef
     @UpdateDateColumn()
     public updatedAt!: Date;
   
-    // eslint-disable-next-line no-undef
     @DeleteDateColumn()
     public deletedAt?: Date;
 }
