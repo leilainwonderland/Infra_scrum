@@ -20,23 +20,21 @@ const addprojects = async (req:Request, res:Response) => {
 };
 
 const deleteProjects = async (req: Request, res:Response, next:NextFunction) => {
+  // eslint-disable-next-line no-console
   console.log('deleteProjects');
-
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
-  try {
-    const project = await projectRepository.findOneBy({
-      id: req.body.id,
-    });
-    if (userId === project?.userCreator) {
-      await projectRepository.delete(project!.id);
-      console.log('You can Delete');
-      res.status(200).json({ status: 'OK' });
-    };
-  } catch (e) {
-    console.log(e);
-  };
-  ifError('Forbidden', 403);
+
+  const project = await projectRepository
+    .createQueryBuilder('project')
+    .where('project.id = :id', { id: req.body.id })
+    .leftJoinAndSelect('project.userCreator', 'userCreator')
+    .getOne();
+  if (project?.userCreator.id === userId) {
+    await projectRepository.delete(project!.id);
+    return res.status(200).json({ status: 'OK' });
+  }
+  ifError('Forrbietruc', 403);
   return next(err);
 };
 

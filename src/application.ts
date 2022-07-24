@@ -10,8 +10,8 @@ const createApp = ():express.Application => {
   app.use(cors());
   app.use(json());
   // ENTER YOUR ROUTES HERE
-  app.use(userRouter);
-  app.use(projectRouter);
+  app.use('/users', userRouter);
+  app.use('/projects', projectRouter);
   return app;
 };
 
