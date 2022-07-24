@@ -12,6 +12,10 @@ const createApp = ():express.Application => {
   // ENTER YOUR ROUTES HERE
   app.use(userRouter);
   app.use(projectRouter);
+  app.use((_req, res, _next) => {
+    res.status(404).send('Page inexistante!');
+  });
+
   return app;
 };
 
