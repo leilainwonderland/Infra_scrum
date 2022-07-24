@@ -9,7 +9,7 @@ const addprojects = async (req:Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
   const user = await userRepository.findOneBy({ id: userId });
-  req.body.userCreator = user!.id;
+  req.body.userCreator = user;
   req.body.users = [user];
   try {
     const project = projectRepository.create(req.body);

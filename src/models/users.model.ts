@@ -4,7 +4,7 @@
 /* eslint-disable indent */
 /* eslint-disable no-trailing-spaces */
 import { compare, hash } from 'bcrypt';
-import { BeforeInsert, Column, Entity, ManyToMany } from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model.js';
 import { Project } from './projects.model.js';
 
@@ -47,6 +47,9 @@ export class User extends BaseModel {
     public verifyPassword (password: string): Promise<boolean> {
       return compare(password, this.password);
     }
+
+    @OneToMany(() => Project, project => project.userCreator)
+    public projectBy?: Project[];
 
     @ManyToMany(() => Project, project => project.users)
     public projects?: Project[];

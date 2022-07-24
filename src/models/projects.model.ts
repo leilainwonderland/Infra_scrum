@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { BaseModel } from './base.model.js';
 import { User } from './users.model.js';
 
@@ -22,8 +22,10 @@ export class Project extends BaseModel {
     @Column()
   public status!: string;
 
-  @Column()
-    public userCreator!: number;
+  // @Column()
+  //   public userCreator!: number;
+  @ManyToOne(() => User, user => user.projectBy)
+    public userCreator!: User;
 
   @ManyToMany(() => User, user => user.projects, {
     cascade: true,
