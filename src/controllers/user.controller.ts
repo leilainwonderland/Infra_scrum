@@ -16,7 +16,7 @@ const addUser = async (req:Request, res:Response, next: NextFunction) => {
   try {
     const user = userRepository.create(req.body);
     await userRepository.save(user);
-    res.status(201).json({ status: 'OK' });
+    return res.status(201).json({ status: 'OK' });
   } catch (e) {
     console.log(e);
   }
@@ -38,7 +38,7 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
     return res.json({ jwtToken });
   };
   ifError('Bad credentials', 401);
-  next(err);
+  return next(err);
 };
 
 const getDataUser = async (req: Request, res: Response) => {
@@ -59,7 +59,7 @@ const getDataUser = async (req: Request, res: Response) => {
     ])
     .leftJoinAndSelect('user.projectBy', 'projectBy')
     .getOne();
-  res.status(200).json({ user });
+  return res.status(200).json({ user });
 };
 
 export { addUser, login, getDataUser };
