@@ -16,7 +16,7 @@ const addUser = async (req:Request, res:Response, next: NextFunction) => {
   try {
     const user = userRepository.create(req.body);
     await userRepository.save(user);
-    res.status(201).json(user);
+    res.status(201).json({ status: 'OK' });
   } catch (e) {
     console.log(e);
   }
@@ -45,12 +45,20 @@ const getDataUser = async (req: Request, res: Response) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
 
-  const user = await userRepository.findOne({
-    where: {
-      id: userId,
-    },
-    relations: ['projects'],
-  });
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.id = :id', { id: userId })
+    .select([
+      'user.email',
+      'user.city',
+      'user.name',
+      'user.lastName',
+      'user.role',
+      'user.tel',
+      'user.img',
+    ])
+    .leftJoinAndSelect('user.projectBy', 'projectBy')
+    .getOne();
   res.status(200).json({ user });
 };
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import type { NextFunction, Request, Response } from 'express';
 import type { JwtPayload } from 'jsonwebtoken';
 import { decode } from 'jsonwebtoken';
@@ -14,7 +13,7 @@ const addprojects = async (req:Request, res:Response) => {
   try {
     const project = projectRepository.create(req.body);
     await projectRepository.save(project);
-    res.status(201).json({ project });
+    res.status(201).json({ status: 'OK' });
   } catch (e) {
     console.log(e);
   }
@@ -32,7 +31,7 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
     if (userId === project?.userCreator) {
       await projectRepository.delete(project!.id);
       console.log('You can Delete');
-      res.status(200).json('OK');
+      res.status(200).json({ status: 'OK' });
     };
   } catch (e) {
     console.log(e);
@@ -41,4 +40,33 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
   return next(err);
 };
 
-export { addprojects, deleteProjects };
+const getProjects = (req: Request, res:Response) => {
+  console.log('getProjects');
+};
+
+const patchProjects = async (req: Request, res:Response) => {
+  console.log('patchProjects');
+
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+  console.log(userId);
+
+  //   try {
+  //     if (userId === project?.userCreator) {
+  const project = await projectRepository
+    .createQueryBuilder()
+    .update('project')
+    .set(req.body)
+    .where('project.id = :id', { id: req.body.id })
+    .execute();
+  res.status(200).json(project);
+  //     };
+//   } catch (e) {
+//     console.log(e);
+//   };
+//   ifError('Forbidden', 403);
+//   return next(err);
+// };
+};
+
+export { addprojects, deleteProjects, getProjects, patchProjects };
