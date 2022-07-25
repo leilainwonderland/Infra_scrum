@@ -1,9 +1,8 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { BaseModel } from './base.model.js';
-import type { User } from './users.model.js';
+import { User } from './users.model.js';
 
 @Entity()
-
 export class Project extends BaseModel {
     @Column('varchar', { length: 35 })
   public name!: string;
@@ -23,9 +22,16 @@ export class Project extends BaseModel {
     @Column()
   public status!: string;
 
-  @Column('varchar', { unique: true })
-    public userCreator!: string;
+  // @Column()
+  //   public userCreator!: number;
+  @ManyToOne(() => User, user => user.projectBy)
+    public userCreator!: User;
 
-   @ManyToOne('User', 'projects')
-  public user?:User;
+  @ManyToMany(() => User, user => user.projects, {
+    cascade: true,
+  })
+  @JoinTable(
+    { name: 'users_projects' },
+  )
+  public users?: User[];
 }

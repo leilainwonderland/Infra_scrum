@@ -3,16 +3,14 @@ import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, DeleteDateC
 
 export class BaseModel {
     @PrimaryGeneratedColumn('increment')
-  public id!: string;
+  public id!: number;
   
     @CreateDateColumn()
     public createdAt!: Date;
 
-    // eslint-disable-next-line no-undef
     @UpdateDateColumn()
     public updatedAt!: Date;
   
-    // eslint-disable-next-line no-undef
     @DeleteDateColumn()
     public deletedAt?: Date;
 }

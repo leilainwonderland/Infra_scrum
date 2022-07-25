@@ -1,24 +1,65 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { JwtPayload } from 'jsonwebtoken';
 import { userRepository } from '../application.database.js';
-import type { HttpError } from '../middlewares/error.middleware.js';
+import { err, ifError } from '../middlewares/error.middleware.js';
+import pkg from 'jsonwebtoken';
+const { sign, decode } = pkg;
 
 const addUser = async (req:Request, res:Response, next: NextFunction) => {
   const user = await userRepository.findOneBy({
     email: req.body.email,
   });
   if (user) {
-    const err = new Error() as HttpError;
-    err.message = 'invalid request';
-    err.status = 406;
+    ifError('invalid request', 406);
     return next(err);
   }
   try {
     const user = userRepository.create(req.body);
     await userRepository.save(user);
-    res.status(201).json(user);
+    return res.status(201).json({ status: 'OK' });
   } catch (e) {
     console.log(e);
   }
 };
 
-export { addUser };
+const login = async (req: Request, res: Response, next:NextFunction) => {
+  const user = await userRepository!.findOne({
+    where: {
+      email: req.body.email,
+    },
+    select: ['id', 'password'],
+  });
+
+  if (user && await user!.verifyPassword(req.body.password)) {
+    const jwtToken = sign(
+      { data: user.id },
+      process.env.JWT_SECRET || 'lesfullstacksontlesbest',
+    );
+    return res.json({ jwtToken });
+  };
+  ifError('Bad credentials', 401);
+  return next(err);
+};
+
+const getDataUser = async (req: Request, res: Response) => {
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.id = :id', { id: userId })
+    .select([
+      'user.email',
+      'user.city',
+      'user.name',
+      'user.lastName',
+      'user.role',
+      'user.tel',
+      'user.img',
+    ])
+    .leftJoinAndSelect('user.projectBy', 'projectBy')
+    .getOne();
+  return res.status(200).json({ user });
+};
+
+export { addUser, login, getDataUser };
