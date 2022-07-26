@@ -18,6 +18,7 @@ const addUser = async (req:Request, res:Response, next: NextFunction) => {
     await userRepository.save(user);
     return res.status(201).json({ status: 'OK' });
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e);
   }
 };

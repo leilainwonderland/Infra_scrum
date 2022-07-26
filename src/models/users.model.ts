@@ -7,6 +7,7 @@ import { compare, hash } from 'bcrypt';
 import { BeforeInsert, Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model.js';
 import { Project } from './projects.model.js';
+import { Tasks } from './tasks.model.js';
 
 @Entity()
 export class User extends BaseModel {
@@ -53,4 +54,7 @@ export class User extends BaseModel {
 
     @ManyToMany(() => Project, project => project.users)
     public projects?: Project[];
+
+    @ManyToMany(() => Tasks, tasks => tasks.users)
+    public tasks?:Tasks[];
 };

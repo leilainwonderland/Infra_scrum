@@ -1,5 +1,6 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { BaseModel } from './base.model.js';
+import { Tasks } from './tasks.model.js';
 import { User } from './users.model.js';
 
 @Entity()
@@ -34,4 +35,7 @@ export class Project extends BaseModel {
     { name: 'users_projects' },
   )
   public users?: User[];
+
+  @OneToMany(() => Tasks, tasks => tasks.project)
+  public tasks?: Tasks[];
 }
