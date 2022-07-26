@@ -2,16 +2,14 @@ import type { Request, Response } from 'express';
 import { projectRepository, tasksRepository } from '../application.database.js';
 
 const addTasks = async (req: Request, res: Response) => {
-  const projectId = req.body.projectId;
+  const projectId = req.body.project;
   const project = await projectRepository.findOneBy({ id: projectId });
   req.body.project = project;
-
   try {
     const task = tasksRepository.create(req.body);
     await tasksRepository.save(task);
     return res.status(201).json({ status: 'OK' });
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.log(e);
   }
 };

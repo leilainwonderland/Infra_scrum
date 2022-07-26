@@ -12,12 +12,6 @@ export class Tasks extends BaseModel {
   @Column('varchar', { length: 35 })
 public status!: string;
 
-  //   @Column('varchar', { unique: true })
-  // public projectId!: number;
-
-  //   @Column('varchar', { unique: true })
-  //   public userId!: number;
-
     @Column('varchar', { length: 250 })
   public description?: string;
 

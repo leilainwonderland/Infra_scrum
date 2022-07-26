@@ -1,7 +1,7 @@
 import type { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import { Project } from './models/projects.model.js';
-import type { Tasks } from './models/tasks.model.js';
+import { Tasks } from './models/tasks.model.js';
 import { User } from './models/users.model.js';
 
 let userRepository: Repository<User>;
@@ -26,6 +26,8 @@ const initDatabase = async () => {
       .getRepository(User);
     projectRepository = connect
       .getRepository(Project);
+    tasksRepository = connect
+      .getRepository(Tasks);
     console.log('Connect to db successfully');
   } catch (e) {
     console.error(e);
