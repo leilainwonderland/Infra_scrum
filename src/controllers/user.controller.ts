@@ -43,6 +43,8 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
 };
 
 const getDataUser = async (req: Request, res: Response) => {
+  console.log(req.headers.authorization);
+
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
 
