@@ -38,23 +38,26 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
 };
 
 const getProjects = async (req: Request, res:Response) => {
-  const token = req.headers.authorization!.split(' ')[1];
-  const userId = await ((decode(token) as JwtPayload).data);
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where('user.id = :id', { id: userId })
-    .select([
-      'user.email',
-      'user.city',
-      'user.name',
-      'user.lastName',
-      'user.role',
-      'user.tel',
-      'user.img',
-    ])
-    .leftJoinAndSelect('user.projects', 'projects')
-    .getOne();
-  return res.status(200).json({ user });
+  // const token = req.headers.authorization!.split(' ')[1];
+  // const userId = await ((decode(token) as JwtPayload).data);
+  // const user = await userRepository
+  //   .createQueryBuilder('user')
+  //   .where('user.id = :id', { id: userId })
+  //   .select([
+  //     'user.email',
+  //     'user.city',
+  //     'user.name',
+  //     'user.lastName',
+  //     'user.role',
+  //     'user.tel',
+  //     'user.img',
+  //   ])
+  // .getOne();
+  // const project = await projectRepository
+  //   .createQueryBuilder('project')
+  //   .leftJoinAndSelect(User, 'users', 'users.projects = users.id')
+  //   .getMany();
+  // return res.status(200).json({ project });
 };
 
 const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
