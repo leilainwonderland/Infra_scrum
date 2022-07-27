@@ -23,8 +23,6 @@ export class Project extends BaseModel {
     @Column()
   public status!: string;
 
-  // @Column()
-  //   public userCreator!: number;
   @ManyToOne(() => User, user => user.projectBy)
     public userCreator!: User;
 

@@ -3,7 +3,7 @@ import { addTasks, deleteTasks, patchTask } from '../controllers/tasks.controlle
 import { authotized } from '../middlewares/autorized.middleware.js';
 const taskRouter: Router = Router();
 
-taskRouter.post('/:id/new_tasks', authotized, addTasks);
+taskRouter.post('/new_tasks', authotized, addTasks);
 taskRouter.delete('/:id/delete_tasks', authotized, deleteTasks);
 taskRouter.patch('/:id/patch_tasks', authotized, patchTask);
 
