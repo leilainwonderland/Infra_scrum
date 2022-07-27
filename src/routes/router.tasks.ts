@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { addTasks, deleteTasks, patchTask } from '../controllers/tasks.controller.js';
-import { authotized } from '../middlewares/autorized.middleware.js';
+import { addTasks, deleteTasks, getTask, patchTask } from '../controllers/tasks.controller.js';
+import { authorized } from '../middlewares/authorized.middleware.js';
 const taskRouter: Router = Router();
 
-taskRouter.post('/new_tasks', authotized, addTasks);
-taskRouter.delete('/:id/delete_tasks', authotized, deleteTasks);
-taskRouter.patch('/:id/patch_tasks', authotized, patchTask);
-
+taskRouter.post('/new_tasks', authorized, addTasks);
+taskRouter.delete('/delete_tasks', authorized, deleteTasks);
+taskRouter.patch('/:id/patch_tasks', authorized, patchTask);
+taskRouter.get('/get_tasks', authorized, getTask);
 export { taskRouter };

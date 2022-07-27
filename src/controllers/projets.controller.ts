@@ -4,8 +4,8 @@ import type { JwtPayload } from 'jsonwebtoken';
 import { decode } from 'jsonwebtoken';
 import { projectRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../middlewares/error.middleware.js';
-import type { User } from '../models/users.model.js';
 import { Project } from '../models/projects.model.js';
+import type { User } from '../models/users.model.js';
 
 const addprojects = async (req:Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
@@ -32,7 +32,7 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
     .leftJoinAndSelect('project.userCreator', 'userCreator')
     .getOne();
   if (project?.userCreator.id === userId) {
-    await projectRepository.delete(project!.id);
+    await projectRepository.softDelete(project!.id);
     return res.status(200).json({ status: 'OK' });
   }
   ifError('Forbidden', 403);
@@ -53,18 +53,22 @@ const getProjects = async (req: Request, res:Response) => {
 
 const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
   console.log('patchProjects');
-  /**
-   * VENIR RECHERCHER LES ANCIENS USERS POUR LES AJOUTER À REQ.BODY.USERS !!!
-   */
-
-  // On vient chercher l'id de l'utilisateur connecter qui ce trouve dans le token
+  // On vient chercher l'id de l'utilisateur connecté qui se trouve dans le token
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
 
-  // si req.body.users existe, on vient boucler dedant pour récupérer les utilisateurs
+  // si req.body.users existe, on vient boucler dedans pour récupérer les utilisateurs
   if (req.body.users) {
-    // on y ajoute l'id par defaut du createur du project
-    req.body.users.push(userId);
+    // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
+    const lastUsers = await userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.projects', 'projects')
+      .where('projects.id = :id', { id: req.body.id })
+      .select('user.id')
+      .getMany();
+    for (const key of lastUsers) {
+      req.body.users.push(key.id);
+    }
 
     const arrayUsers: User[] = [];
     for (let key of req.body.users) {
@@ -74,7 +78,7 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
         .where('users.id = :id', { id: key })
         .getOne();
 
-      // on viens ajouter a arrayUsers les Repository des users
+      // on vient ajouter à arrayUsers les Repository des users
       arrayUsers.push(key);
     }
     // Je ne sais plus, sorry. :(
