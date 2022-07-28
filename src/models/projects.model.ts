@@ -17,9 +17,6 @@ export class Project extends BaseModel {
   @Column()
   public endDate!: Date;
 
-  @Column()
-  public priority!: string;
-
     @Column()
   public status!: string;
 

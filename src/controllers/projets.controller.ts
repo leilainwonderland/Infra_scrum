@@ -45,6 +45,7 @@ const getProjects = async (req: Request, res:Response) => {
   const project = await projectRepository
     .createQueryBuilder('project')
     .leftJoinAndSelect('project.users', 'users')
+    .leftJoinAndSelect('project.userCreator', 'userCreator')
     .having('users.id = :id', { id: userId })
     .getMany()
   ;
