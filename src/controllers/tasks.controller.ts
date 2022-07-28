@@ -50,8 +50,17 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getTask = (req: Request, res: Response) => {
+const getTask = async (req: Request, res: Response) => {
   console.log('getTask');
+  const tasksByProjectId = await req.body.tasks;
+  const tasks = await tasksRepository
+    .createQueryBuilder('tasks')
+    .leftJoinAndSelect('tasks.project', 'project')
+    // .having('project.id = :id', { id: tasksByProjectId })
+    .where('tasks.projectId = :id', { id: req.body.id })
+    .getMany()
+  ;
+  return res.status(200).json({ tasks });
 };
 
 export { addTasks, deleteTasks, patchTask, getTask };
