@@ -3,8 +3,8 @@ import pkg from 'jsonwebtoken';
 import { err, ifError } from './error.middleware.js';
 const { verify } = pkg;
 
-const authotized = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('authotized');
+const authorized = async (req: Request, res: Response, next: NextFunction) => {
+  console.log('authorized');
   try {
     const jwtToken = req.headers.authorization?.split(' ')[1] || 'NO TOKEN';
     await verify(jwtToken, process.env.JWT_SECRET || 'nojwt');
@@ -15,4 +15,4 @@ const authotized = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { authotized };
+export { authorized };

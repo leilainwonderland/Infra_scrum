@@ -14,11 +14,10 @@ const addUser = async (req:Request, res:Response, next: NextFunction) => {
     return next(err);
   }
   try {
-    const user = userRepository.create(req.body);
+    const user = await userRepository.create(req.body);
     await userRepository.save(user);
     return res.status(201).json({ status: 'OK' });
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.log(e);
   }
 };
@@ -61,6 +60,7 @@ const getDataUser = async (req: Request, res: Response) => {
       'user.img',
     ])
     .leftJoinAndSelect('user.projectBy', 'projectBy')
+    // ici joindre les tasks
     .getOne();
   return res.status(200).json({ user });
 };
