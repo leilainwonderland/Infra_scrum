@@ -32,17 +32,6 @@ const initDatabase = async () => {
   } catch (e) {
     console.error(e);
   };
-
-  // DON 'T DELETE
-//   const projectData = await projectRepository.find({
-//     where: {
-//       user: {
-//         id: 6,
-//       },
-//     },
-//     relations: ['user'],
-//   });
-//   console.log(projectData);
 };
 
 export { initDatabase, userRepository, projectRepository, tasksRepository };
