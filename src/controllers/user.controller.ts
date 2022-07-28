@@ -59,10 +59,8 @@ const getDataUser = async (req: Request, res: Response) => {
       'user.tel',
       'user.img',
     ])
-    .leftJoinAndSelect('user.projectBy', 'projectBy')
-    // ici joindre les tasks
     .getOne();
-  return res.status(200).json({ user });
+  return res.status(200).json(user);
 };
 
 export { addUser, login, getDataUser };

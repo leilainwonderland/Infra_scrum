@@ -11,9 +11,9 @@ sleep 2
 docker rm server-db-1
 sleep 2
 docker compose up -d
-sleep 10
+sleep 12
 docker start server-db-1
-sleep 2
+sleep 3
 pnpm start:dev
 sleep 8
 mysql -h 127.0.0.1 -P 3306 -u root -p db_test < sql/user.sql

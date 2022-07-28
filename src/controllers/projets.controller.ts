@@ -48,7 +48,7 @@ const getProjects = async (req: Request, res:Response) => {
     .having('users.id = :id', { id: userId })
     .getMany()
   ;
-  return res.status(200).json({ project });
+  return res.status(200).json(project);
 };
 
 const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
