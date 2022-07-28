@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { projectRepository, tasksRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../middlewares/error.middleware.js';
+import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
 const addTasks = async (req: Request, res: Response, next:NextFunction) => {
@@ -41,7 +42,7 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
     const lastUsers = await userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.tasks', 'tasks')
-      .where('tasks.id = :id', { id: req.body.id })
+      .where('tasks.id = :id', { id: req.params.id })
       .select('user.id')
       .getMany();
 
@@ -49,7 +50,6 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
     if (lastUsers.length > 0) {
       for (const key of lastUsers) {
         req.body.users.push(key.id);
-        console.log('key of lastUser', key);
       }
     }
 
@@ -60,51 +60,45 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
         .createQueryBuilder('users')
         .where('users.id = :id', { id: key })
         .getOne();
-      console.log('new userRepository', userRepository);
-
       // on vient ajouter à arrayUsers les Repository des users
       arrayUsers.push(key);
-      console.log(arrayUsers);
     }
     // // Je ne sais plus, sorry. :(
-    // req.body.users = arrayUsers;
-    // const oldTask = await tasksRepository
-    //   .createQueryBuilder('task')
-    //   .where('task.id = :id', { id: req.params.id })
-    //   .leftJoinAndSelect('task.users', 'users')
-    //   .getOne();
+    req.body.users = arrayUsers;
+    const oldTask = await tasksRepository
+      .createQueryBuilder('task')
+      .where('task.id = :id', { id: req.params.id })
+      .leftJoinAndSelect('task.users', 'users')
+      .getOne();
 
-    // console.log(oldTask);
-
-    // try {
-    //   await tasksRepository
-    //     .createQueryBuilder('task')
-    //   // la relation que l'on vient update
-    //     .relation(User, 'task')
-    //   // le project que l'on vient update
-    //     .of(oldTask)
-    //   // remplace oldProject.users par arrayUsers
-    //     .addAndRemove(arrayUsers, oldTask?.users);
-    //   return res.status(201).json({ status: 'OK' });
-    // } catch (e) {
-    //   console.log(e);
-    // }
-    return true;
+    try {
+      await tasksRepository
+        .createQueryBuilder('task')
+      // la relation que l'on vient update
+        .relation(Tasks, 'users')
+      // le project que l'on vient update
+        .of(oldTask)
+      // remplace oldProject.users par arrayUsers
+        .addAndRemove(arrayUsers, oldTask?.users);
+      return res.status(201).json({ status: 'OK' });
+    } catch (e) {
+      console.log(e);
+    }
   }
-  console.log(req.body);
-  // const task = await tasksRepository
-  //   .createQueryBuilder()
-  //   .update('tasks')
-  //   .set(req.body)
-  //   .where('tasks.id = :id', { id: req.params.id });
-  // if (Object.keys(req.body).length >= 1) {
-  //   console.log(await task.execute());
-  //   await task.execute();
-  //   return res.status(200).json({ status: 'OK' });
-  // } else {
-  //   ifError('Bad Request', 400);
-  //   return next(err);
-  // }
+  if (req.body.users === undefined) {
+    const task = await tasksRepository
+      .createQueryBuilder()
+      .update('tasks')
+      .set(req.body)
+      .where('tasks.id = :id', { id: req.params.id });
+    if (Object.keys(req.body).length >= 1) {
+      await task.execute();
+      return res.status(200).json({ status: 'OK' });
+    } else {
+      ifError('Bad Request', 400);
+      return next(err);
+    }
+  }
 };
 
 const getTask = (req: Request, res: Response) => {
