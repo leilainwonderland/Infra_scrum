@@ -60,7 +60,7 @@ const getDataUser = async (req: Request, res: Response) => {
       'user.img',
     ])
     .getOne();
-  return res.status(200).json(user);
+  return res.status(200).json({ user });
 };
 
 export { addUser, login, getDataUser };

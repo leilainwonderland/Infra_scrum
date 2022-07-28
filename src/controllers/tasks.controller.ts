@@ -103,7 +103,7 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
 
 const getTask = async (req: Request, res: Response) => {
   console.log('getTask');
-  const tasksByProjectId = await req.body.tasks;
+  // const tasksByProjectId = await req.body.tasks;
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
     .leftJoinAndSelect('tasks.project', 'project')
