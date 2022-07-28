@@ -30,7 +30,7 @@ const task = await tasksRepository
 .update('tasks')
 .set(req.body)
 .where('tasks.id = :id', { id: req.params.id });
-if (Object.keys(req.body).length >= 2) {
+if (Object.keys(req.body).length >= 1) {
   console.log(await task.execute());
 await task.execute();
 return res.status(200).json({ status: 'OK' });
