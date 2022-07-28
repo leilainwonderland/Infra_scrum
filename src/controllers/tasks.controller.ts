@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { decode, JwtPayload } from 'jsonwebtoken';
 import { projectRepository, tasksRepository } from '../application.database.js';
 import { err, ifError } from '../middlewares/error.middleware.js';
 
@@ -60,4 +61,19 @@ const getTaskByProject = async (req: Request, res: Response) => {
   return res.status(200).json({ tasks });
 };
 
-export { addTasks, deleteTasks, patchTask, getTaskByProject };
+const getTaskByUser = async (req: Request, res: Response) => {
+  console.log('getTask');
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+  const tasks = await tasksRepository
+    .createQueryBuilder('tasks')
+    .leftJoinAndSelect('tasks.user', 'user')
+    .where('tasks.userId = :id', { id: userId })
+    .getMany()
+  ;
+  return res.status(200).json({ tasks });
+};
+
+
+
+export { addTasks, deleteTasks, patchTask, getTaskByProject, getTaskByUser };
