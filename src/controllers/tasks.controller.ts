@@ -50,8 +50,13 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getTask = (req: Request, res: Response) => {
+const getTask = async (req: Request, res: Response) => {
   console.log('getTask');
+  const task = await tasksRepository
+    .createQueryBuilder('tasks')
+    .leftJoinAndSelect('tasks.project', 'project')
+    .having('project.id = :id', { id: req.body.id })
+    .getMany();
 };
 
 export { addTasks, deleteTasks, patchTask, getTask };
