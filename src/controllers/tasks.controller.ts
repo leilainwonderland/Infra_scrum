@@ -111,7 +111,7 @@ const getTask = async (req: Request, res: Response) => {
     .where('tasks.projectId = :id', { id: req.body.id })
     .getMany()
   ;
-  return res.status(200).json({ tasks });
+  return res.status(200).json(tasks);
 };
 
 export { addTasks, deleteTasks, patchTask, getTask };
