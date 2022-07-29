@@ -7,5 +7,5 @@ taskRouter.post('/new_tasks', authorized, addTasks);
 taskRouter.delete('/delete_tasks', authorized, deleteTasks);
 taskRouter.patch('/:id/patch_tasks', authorized, patchTask);
 taskRouter.get('/get_tasksByProject', authorized, getTaskByProject);
-taskRouter.get('get_tasksByUser', authorized, getTaskByUser);
+taskRouter.get('/get_tasksByUser', authorized, getTaskByUser);
 export { taskRouter };

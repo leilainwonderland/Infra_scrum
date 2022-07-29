@@ -117,12 +117,14 @@ const getTaskByUser = async (req: Request, res: Response) => {
   console.log('getTask');
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
+
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
-    .leftJoinAndSelect('tasks.user', 'user')
-    .where('tasks.userId = :id', { id: userId })
+    .leftJoinAndSelect('tasks.users', 'users')
+    .where('users.id =:id', { id: userId })
     .getMany()
   ;
+
   return res.status(200).json({ tasks });
 };
 
