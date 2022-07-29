@@ -28,7 +28,7 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
   const userId = await ((decode(token) as JwtPayload).data);
   const project = await projectRepository
     .createQueryBuilder('project')
-    .where('project.id = :id', { id: req.body.id })
+    .where('project.id = :id', { id: req.params.id })
     .leftJoinAndSelect('project.userCreator', 'userCreator')
     .getOne();
   if (project?.userCreator.id === userId) {
