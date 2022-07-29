@@ -46,9 +46,10 @@ const getProjects = async (req: Request, res:Response) => {
     .createQueryBuilder('project')
     .leftJoinAndSelect('project.users', 'users')
     .leftJoinAndSelect('project.userCreator', 'userCreator')
-    .having('users.id = :id', { id: userId })
+    .having('userCreator.id = :id', { id: userId })
     .getMany()
   ;
+  // bug ici :()
   return res.status(200).json(project);
 };
 
@@ -67,6 +68,8 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
       .where('projects.id = :id', { id: req.body.id })
       .select('user.id')
       .getMany();
+    console.log('lastUsers', lastUsers);
+
     for (const key of lastUsers) {
       req.body.users.push(key.id);
     }
