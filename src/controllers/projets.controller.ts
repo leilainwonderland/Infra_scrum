@@ -32,7 +32,7 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
     .leftJoinAndSelect('project.userCreator', 'userCreator')
     .getOne();
   if (project?.userCreator.id === userId) {
-    await projectRepository.softDelete(project!.id);
+    await projectRepository.delete(project!.id);
     return res.status(200).json({ status: 'OK' });
   }
   ifError('Forbidden', 403);
@@ -99,6 +99,8 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
         .of(oldProject)
         // remplace oldProject.users par arrayUsers
         .addAndRemove(arrayUsers, oldProject?.users);
+      console.log(oldProject);
+
       return res.status(201).json({ status: 'OK' });
     } catch (e) {
       console.log(e);

@@ -20,8 +20,11 @@ export class Project extends BaseModel {
     @Column()
   public status!: string;
 
+  @Column()
+    public logo?: string;
+
   @ManyToOne(() => User, user => user.projectBy)
-    public userCreator!: User;
+  public userCreator!: User;
 
   @ManyToMany(() => User, user => user.projects, {
     cascade: true,
