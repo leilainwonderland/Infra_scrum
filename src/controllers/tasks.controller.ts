@@ -6,12 +6,14 @@ import { err, ifError } from '../middlewares/error.middleware.js';
 import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
-const addTasks = async (req: Request, res: Response, next:NextFunction) => {
-  const projectId = req.body.project;
-  const project = await projectRepository.findOneBy({ id: projectId });
-  req.body.project = project;
+const addTask = async (req: Request, res: Response, next:NextFunction) => {
+  const project = await projectRepository
+    .createQueryBuilder('project')
+    .where('project.id = :id', { id: req.params.id })
+    .getOne();
   if (project !== null) {
     try {
+      req.body.project = project.id; // TMP
       const task = tasksRepository.create(req.body);
       await tasksRepository.save(task);
       return res.status(201).json({ status: 'OK' });
@@ -23,18 +25,18 @@ const addTasks = async (req: Request, res: Response, next:NextFunction) => {
   return next(err);
 };
 
-const deleteTasks = async (req: Request, res: Response, next:NextFunction) => {
-  console.log('deleteTasks');
-  try {
-    if (Object.keys(req.body).length !== 0) {
-      const task = await tasksRepository.findOneBy({ id: req.body.id });
-      await tasksRepository.softDelete(task!.id);
-      return res.status(200).json({ status: 'OK' });
-    }
-  } catch (e) {
-    ifError('Bad Request', 400);
-    return next(err);
+const deleteTask = async (req: Request, res: Response, next:NextFunction) => {
+  if (Object.keys(req.params).length !== 0) {
+    const task = await tasksRepository
+      .createQueryBuilder('task')
+      .where('task.id = :id', { id: req.params.id })
+      .getOne();
+    await tasksRepository.delete(task!.id);
+    return res.status(200).json({ status: 'OK' });
   }
+
+  ifError('Bad Request', 400);
+  return next(err);
 };
 
 const patchTask = async (req: Request, res: Response, next: NextFunction) => {
@@ -104,28 +106,26 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getTaskByProject = async (req: Request, res: Response) => {
-  console.log('getTask');
-  const tasks = await tasksRepository
-    .createQueryBuilder('tasks')
-    .where('tasks.projectId = :id', { id: req.body.id })
+  const project = await projectRepository
+    .createQueryBuilder('project')
+    .where('project.id = :id', { id: req.params.id })
+    .leftJoinAndSelect('project.tasks', 'tasks')
     .getMany()
   ;
-  return res.status(200).json({ tasks });
+  return res.status(200).json({ project });
 };
 
 const getTaskByUser = async (req: Request, res: Response) => {
-  console.log('getTask');
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
 
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
     .leftJoinAndSelect('tasks.users', 'users')
-    .where('users.id =:id', { id: userId })
+    .having('users.id =:id', { id: userId }) // TMP SAME PROBLEME
     .getMany()
   ;
-
   return res.status(200).json({ tasks });
 };
 
-export { addTasks, deleteTasks, patchTask, getTaskByProject, getTaskByUser };
+export { addTask, deleteTask, patchTask, getTaskByProject, getTaskByUser };

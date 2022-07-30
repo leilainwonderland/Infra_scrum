@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import type { NextFunction, Request, Response } from 'express';
 import type { JwtPayload } from 'jsonwebtoken';
 import { decode } from 'jsonwebtoken';
@@ -7,10 +6,13 @@ import { err, ifError } from '../middlewares/error.middleware.js';
 import { Project } from '../models/projects.model.js';
 import type { User } from '../models/users.model.js';
 
-const addprojects = async (req:Request, res:Response) => {
+const addproject = async (req:Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
-  const user = await userRepository.findOneBy({ id: userId });
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.id = :id', { id: userId })
+    .getOne();
   req.body.userCreator = user;
   req.body.users = [user];
   try {
@@ -22,8 +24,7 @@ const addprojects = async (req:Request, res:Response) => {
   }
 };
 
-const deleteProjects = async (req: Request, res:Response, next:NextFunction) => {
-  console.log('deleteProjects');
+const deleteProject = async (req: Request, res:Response, next:NextFunction) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
   const project = await projectRepository
@@ -39,22 +40,20 @@ const deleteProjects = async (req: Request, res:Response, next:NextFunction) => 
   return next(err);
 };
 
-const getProjects = async (req: Request, res:Response) => {
+const getProject = async (req: Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
   const project = await projectRepository
     .createQueryBuilder('project')
-    .leftJoinAndSelect('project.users', 'users')
     .leftJoinAndSelect('project.userCreator', 'userCreator')
-    .having('userCreator.id = :id', { id: userId })
+    .leftJoinAndSelect('project.users', 'users')
+    .where('users.id = :id', { id: userId }) // tmp
     .getMany()
   ;
-  // bug ici :()
   return res.status(200).json(project);
 };
 
-const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
-  console.log('patchProjects');
+const patchProject = async (req: Request, res:Response, next:NextFunction) => {
   // On vient chercher l'id de l'utilisateur connecté qui se trouve dans le token
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
@@ -65,10 +64,9 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
     const lastUsers = await userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.projects', 'projects')
-      .where('projects.id = :id', { id: req.body.id })
+      .where('projects.id = :id', { id: req.params.id })
       .select('user.id')
       .getMany();
-    console.log('lastUsers', lastUsers);
 
     for (const key of lastUsers) {
       req.body.users.push(key.id);
@@ -90,7 +88,7 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
 
     const oldProject = await projectRepository
       .createQueryBuilder('project')
-      .where('project.id = :id', { id: req.body.id })
+      .where('project.id = :id', { id: req.params.id })
       .leftJoinAndSelect('project.users', 'users')
       .getOne();
     try {
@@ -102,8 +100,6 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
         .of(oldProject)
         // remplace oldProject.users par arrayUsers
         .addAndRemove(arrayUsers, oldProject?.users);
-      console.log(oldProject);
-
       return res.status(201).json({ status: 'OK' });
     } catch (e) {
       console.log(e);
@@ -112,7 +108,7 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
   if (req.body.users === undefined) {
     const itIsHisProject = await projectRepository
       .createQueryBuilder('project')
-      .where('project.id = :id', { id: req.body.id })
+      .where('project.id = :id', { id: req.params.id })
       .leftJoinAndSelect('project.userCreator', 'userCreator')
       .leftJoinAndSelect('project.users', 'users')
       .getOne();
@@ -121,8 +117,8 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
         .createQueryBuilder()
         .update('project')
         .set(req.body)
-        .where('project.id = :id', { id: req.body.id });
-      if (Object.keys(req.body).length >= 2) {
+        .where('project.id = :id', { id: req.params.id });
+      if (Object.keys(req.body).length >= 1) {
       // can still send empty req :( !!
         await project.execute();
         return res.status(200).json({ status: 'OK' });
@@ -136,4 +132,4 @@ const patchProjects = async (req: Request, res:Response, next:NextFunction) => {
   return next(err);
 };
 
-export { addprojects, deleteProjects, getProjects, patchProjects };
+export { addproject, deleteProject, getProject, patchProject };

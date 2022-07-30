@@ -5,10 +5,11 @@ import { err, ifError } from '../middlewares/error.middleware.js';
 import pkg from 'jsonwebtoken';
 const { sign, decode } = pkg;
 
-const addUser = async (req:Request, res:Response, next: NextFunction) => {
-  const user = await userRepository.findOneBy({
-    email: req.body.email,
-  });
+const newUser = async (req:Request, res:Response, next: NextFunction) => {
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.email = :email', { email: req.body.email })
+    .getOne();
   if (user) {
     ifError('invalid request', 406);
     return next(err);
@@ -23,12 +24,10 @@ const addUser = async (req:Request, res:Response, next: NextFunction) => {
 };
 
 const login = async (req: Request, res: Response, next:NextFunction) => {
-  const user = await userRepository!.findOne({
-    where: {
-      email: req.body.email,
-    },
-    select: ['id', 'password'],
-  });
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.email = :email', { email: req.body.email })
+    .getOne();
 
   if (user && await user!.verifyPassword(req.body.password)) {
     const jwtToken = sign(
@@ -42,11 +41,9 @@ const login = async (req: Request, res: Response, next:NextFunction) => {
 };
 
 const getDataUser = async (req: Request, res: Response) => {
-  console.log(req.headers.authorization);
-
+  console.log('Logged to back end: ok');
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
-
   const user = await userRepository
     .createQueryBuilder('user')
     .where('user.id = :id', { id: userId })
@@ -63,4 +60,24 @@ const getDataUser = async (req: Request, res: Response) => {
   return res.status(200).json({ user });
 };
 
-export { addUser, login, getDataUser };
+const updateUser = async (req: Request, res: Response) => {
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+  const user = await userRepository
+    .createQueryBuilder()
+    .update('user')
+    .set(req.body)
+    .where('user.id = :id', { id: userId });
+  await user.execute();
+  return res.status(200).json({ status: 'OK' });
+};
+
+const deleteUserForProject = async (req: Request, res: Response) => {
+  console.log('deleteUserForProject');
+};
+
+const deleteUserForTask = async (req: Request, res: Response) => {
+  console.log('deleteUserForTask');
+};
+
+export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask };
