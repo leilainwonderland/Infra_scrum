@@ -27,17 +27,20 @@ const addproject = async (req:Request, res:Response) => {
 const deleteProject = async (req: Request, res:Response, next:NextFunction) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
-  const project = await projectRepository
-    .createQueryBuilder('project')
-    .where('project.id = :id', { id: req.params.id })
-    .leftJoinAndSelect('project.userCreator', 'userCreator')
-    .getOne();
-  if (project?.userCreator.id === userId) {
-    await projectRepository.delete(project!.id);
-    return res.status(200).json({ status: 'OK' });
+  try {
+    const project = await projectRepository
+      .createQueryBuilder('project')
+      .where('project.id = :id', { id: req.params.id })
+      .leftJoinAndSelect('project.userCreator', 'userCreator')
+      .getOne();
+    if (project?.userCreator.id === userId) {
+      await projectRepository.delete(project!.id);
+      return res.status(200).json({ status: 'OK' });
+    }
+  } catch (e) {
+    ifError('Forbidden', 403);
+    return next(err);
   }
-  ifError('Forbidden', 403);
-  return next(err);
 };
 
 const getProject = async (req: Request, res:Response) => {
