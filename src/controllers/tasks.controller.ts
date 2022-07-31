@@ -7,6 +7,13 @@ import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
 const addTask = async (req: Request, res: Response, next:NextFunction) => {
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.id = :id', { id: userId })
+    .getOne();
+  req.body.users = [user];
   const project = await projectRepository
     .createQueryBuilder('project')
     .where('project.id = :id', { id: req.params.id })
@@ -121,10 +128,14 @@ const getTaskByUser = async (req: Request, res: Response) => {
 
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
+    .leftJoinAndSelect('tasks.project', 'project')
+    .leftJoinAndSelect('project.userCreator', 'userCreator')
     .leftJoinAndSelect('tasks.users', 'users')
-    .having('users.id =:id', { id: userId }) // TMP SAME PROBLEME
+    .where('users.id =:id', { id: userId })
     .getMany()
   ;
+  console.log(tasks);
+
   return res.status(200).json({ tasks });
 };
 

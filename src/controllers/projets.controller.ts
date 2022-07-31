@@ -50,9 +50,8 @@ const getProject = async (req: Request, res:Response) => {
     .createQueryBuilder('project')
     .leftJoinAndSelect('project.userCreator', 'userCreator')
     .leftJoinAndSelect('project.users', 'users')
-    .where('users.id = :id', { id: userId }) // tmp
-    .getMany()
-  ;
+    .where('users.id = :id', { id: userId })
+    .getMany();
   return res.status(200).json(project);
 };
 
