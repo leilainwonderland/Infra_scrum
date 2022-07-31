@@ -37,7 +37,7 @@ export class User extends BaseModel {
     public tel!: string;
     
     @Column('varchar', { length: 250 })
-    public img: string = 'https://64.media.tumblr.com/57f55afee7406c89ae445a428de5af12/tumblr_nn6od9rYpQ1r4xjo2o1_250.gifv';
+    public img: string = `https://picsum.photos/id/${Math.floor(Math.random() * 200)}/200/300`;
 
     @BeforeInsert()
     async hashPassword () {
@@ -57,4 +57,5 @@ export class User extends BaseModel {
 
     @ManyToMany(() => Tasks, tasks => tasks.users)
     public tasks?:Tasks[];
+
 };

@@ -21,7 +21,7 @@ export class Project extends BaseModel {
   public status!: string;
 
   @Column()
-    public logo?: string;
+    public logo: string = `https://picsum.photos/id/${Math.floor(Math.random() * 200)}/200/300`;
 
   @ManyToOne(() => User, user => user.projectBy)
   public userCreator!: User;
