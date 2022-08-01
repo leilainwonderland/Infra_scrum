@@ -72,13 +72,24 @@ const updateUser = async (req: Request, res: Response) => {
   return res.status(200).json({ status: 'OK' });
 };
 
-const deleteUserForProject = async (req: Request, res: Response) => {
+const deleteUserForProject = async (req: Request, res: Response, next: NextFunction) => {
   console.log('deleteUserForProject');
 };
 
-const deleteUserForTask = async (req: Request, res: Response) => {
-  console.log('deleteUserForTask');
-};
+// supprimer un utilisateur d'une tâche par son id (idUser)
+// const deleteUserForTask = async (req: Request, res: Response, next: NextFunction) => {
+//   console.log('deleteUserForTask');
+//   const token = req.headers.authorization!.split(' ')[1];
+//   const userId = await ((decode(token) as JwtPayload).data);
+//   const user = await userRepository
+//     .createQueryBuilder('user')
+//     .leftJoinAndSelect('user.tasks', 'tasks')
+//     .delete()
+//     .from('tasks')
+//     .where('user.id = :id', { id: userId })
+//     .execute();
+//     console.log(user);
+// };
 
 const allUsers = async (req: Request, res: Response) => {
   console.log('allUsers');
@@ -100,4 +111,4 @@ const allUsers = async (req: Request, res: Response) => {
 
 
 
-export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask, allUsers };
+export { newUser, login, getDataUser, updateUser, deleteUserForProject, allUsers };

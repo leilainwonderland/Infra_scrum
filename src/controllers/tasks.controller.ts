@@ -139,4 +139,81 @@ const getTaskByUser = async (req: Request, res: Response) => {
   return res.status(200).json({ tasks });
 };
 
-export { addTask, deleteTask, patchTask, getTaskByProject, getTaskByUser };
+const deleteUserForTask = async (req: Request, res: Response, next:NextFunction) => {
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+  const task = await tasksRepository
+    .createQueryBuilder('task')
+    .where('task.id = :id', { id: req.params.id })
+    .getOne();
+    console.log('task', task);
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where('user.id = :id', { id: userId })
+    .getOne();
+    console.log('user' , user);
+  // if (task !== undefined && user !== undefined) {
+      try {
+          await tasksRepository
+            .createQueryBuilder('task')
+            .relation(Tasks, 'users')
+            .of(task)
+            // .addAndRemove();
+          return res.status(201).json({ status: 'OK' });
+        } catch (e) {
+            console.log(e);
+          }
+        // }
+        ifError('Bad Request', 400);
+        return next(err);
+        // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
+ 
+        // // const lastUsers = await userRepository
+        // // .createQueryBuilder('user')
+        // // .leftJoinAndSelect('user.tasks', 'tasks')
+        // //   .where('tasks.id = :id', { id: req.params.id })
+        // //   .select('user.id')
+        // //   .getMany();
+          
+        // //   // Par défaut les tasks n'on pas de users
+        // //   if (lastUsers.length > 0) {
+        // //     for (const key of lastUsers) {
+        // //       req.body.users.push(key.id);
+        // //   }
+        // // }
+    
+        // // const arrayUsers: User[] = [];
+        // // for (let key of req.body.users) {
+        // //   // key = chaques valeurs contenu dans req.body.user
+        // //   key = await userRepository
+        // //     .createQueryBuilder('users')
+        // //     .where('users.id = :id', { id: key })
+        // //     .getOne();
+        // //   // on vient ajouter à arrayUsers les Repository des users
+        // //   arrayUsers.push(key);
+        // // }
+        // // // Je ne sais plus, sorry. :(
+        // // req.body.users = arrayUsers;
+        // const oldTask = await tasksRepository
+        //   .createQueryBuilder('task')
+        //   .where('task.id = :id', { id: req.params.id })
+        //   .leftJoinAndSelect('task.users', 'users')
+        //   .getOne();
+    
+        // try {
+        //   await tasksRepository
+        //     .createQueryBuilder('task')
+        //   // la relation que l'on vient update
+        //     .relation(Tasks, 'users')
+        //   // le project que l'on vient update
+        //     .of(oldTask)
+        //   // remplace oldProject.users par arrayUsers
+        //     .addAndRemove(arrayUsers, oldTask?.users);
+        //   return res.status(201).json({ status: 'OK' });
+        // } catch (e) {
+        //   console.log(e);
+        // }
+      
+}
+
+export { addTask, deleteTask, patchTask, getTaskByProject, getTaskByUser, deleteUserForTask };
