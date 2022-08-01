@@ -10,7 +10,7 @@ export class Tasks extends BaseModel {
   public name!: string;
 
   @Column('varchar', { length: 35 })
-public status!: string;
+public status?: string;
 
     @Column('varchar', { length: 250 })
   public description?: string;
@@ -19,16 +19,13 @@ public status!: string;
     public priority!: string;
 
     @Column()
-    public startDate!: Date;
+    public startDate!: string;
 
     @Column()
-    public endDate!: Date;
+    public endDate!: string;
 
     @Column()
     public roles!: string;
-
-    @Column()
-    public assign!: string;
 
    @ManyToOne('Project', 'tasks')
 
