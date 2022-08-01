@@ -111,4 +111,6 @@ const getTaskByProject = async (req: Request, res: Response) => {
   return res.status(200).json({ tasks });
 };
 
-export { addTasks, deleteTasks, patchTask, getTaskByProject };
+const getTaskByUser = async (req: Request, res: Response) => {};
+
+export { addTasks, deleteTasks, patchTask, getTaskByProject, getTaskByUser };
