@@ -72,11 +72,6 @@ const updateUser = async (req: Request, res: Response) => {
   return res.status(200).json({ status: 'OK' });
 };
 
-// const allUsers = async (req: Request, res: Response) => {
-//   const users = await userRepository.find();
-//   return res.status(200).json({ users });
-// };
-
 const deleteUserForProject = async (req: Request, res: Response) => {
   console.log('deleteUserForProject');
 };
@@ -85,8 +80,6 @@ const deleteUserForTask = async (req: Request, res: Response) => {
   console.log('deleteUserForTask');
 };
 
-<<<<<<< HEAD
-=======
 const allUsers = async (req: Request, res: Response) => {
   console.log('allUsers');
   const users = await userRepository
@@ -102,9 +95,6 @@ const allUsers = async (req: Request, res: Response) => {
     ])
     .getMany();
   return res.status(200).json({ users });
-}
+};
 
-
-
->>>>>>> feature/renaud
 export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask, allUsers };
