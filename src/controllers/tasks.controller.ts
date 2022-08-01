@@ -1,4 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { JwtPayload } from 'jsonwebtoken';
+import { decode } from 'jsonwebtoken';
 import { projectRepository, tasksRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../middlewares/error.middleware.js';
 import { Tasks } from '../models/tasks.model.js';
@@ -108,6 +110,23 @@ const getTaskByProject = async (req: Request, res: Response) => {
     .where('tasks.projectId = :id', { id: req.body.id })
     .getMany()
   ;
+  return res.status(200).json({ tasks });
+};
+
+const getTaskByUser = async (req: Request, res: Response) => {
+  const token = req.headers.authorization!.split(' ')[1];
+  const userId = await ((decode(token) as JwtPayload).data);
+
+  const tasks = await tasksRepository
+    .createQueryBuilder('tasks')
+    .leftJoinAndSelect('tasks.project', 'project')
+    .leftJoinAndSelect('project.userCreator', 'userCreator')
+    .leftJoinAndSelect('tasks.users', 'users')
+    .where('users.id =:id', { id: userId })
+    .getMany()
+  ;
+  console.log(tasks);
+
   return res.status(200).json({ tasks });
 };
 
