@@ -12,19 +12,22 @@ export class Project extends BaseModel {
     public description?: string;
 
   @Column()
-    public startDate!: Date;
+    public startDate!: string;
 
   @Column()
-  public endDate!: Date;
-
-  @Column()
-  public priority!: string;
+  public endDate!: string;
 
     @Column()
-  public status!: string;
+  public update!: string;
+
+    @Column()
+    public status!: string;
+
+  @Column()
+    public logo: string = `https://picsum.photos/id/${Math.floor(Math.random() * 200)}/200/300`;
 
   @ManyToOne(() => User, user => user.projectBy)
-    public userCreator!: User;
+  public userCreator!: User;
 
   @ManyToMany(() => User, user => user.projects, {
     cascade: true,
