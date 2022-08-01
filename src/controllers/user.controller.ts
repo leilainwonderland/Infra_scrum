@@ -80,4 +80,19 @@ const deleteUserForTask = async (req: Request, res: Response) => {
   console.log('deleteUserForTask');
 };
 
-export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask };
+const allUsers = async (req: Request, res: Response) => {
+  console.log('allUsers');
+  const users = await userRepository
+    .createQueryBuilder('users')
+    .select([
+      'users.email',
+      'users.name',
+      'users.lastName',
+    ])
+    .getMany();
+  return res.status(200).json({ users });
+}
+
+
+
+export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask, allUsers };
