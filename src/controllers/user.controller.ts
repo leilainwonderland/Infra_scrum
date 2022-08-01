@@ -92,6 +92,7 @@ const allUsers = async (req: Request, res: Response) => {
       'users.tel',
       'users.img',
       'users.role',
+      'users.id',
     ])
     .getMany();
   return res.status(200).json({ users });
