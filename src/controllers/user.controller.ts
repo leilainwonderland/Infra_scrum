@@ -6,14 +6,6 @@ import pkg from 'jsonwebtoken';
 const { sign, decode } = pkg;
 
 const newUser = async (req:Request, res:Response, next: NextFunction) => {
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where('user.email = :email', { email: req.body.email })
-    .getOne();
-  if (user) {
-    ifError('invalid request', 406);
-    return next(err);
-  }
   try {
     const user = await userRepository.create(req.body);
     await userRepository.save(user);

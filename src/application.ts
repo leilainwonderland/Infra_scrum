@@ -1,10 +1,10 @@
 import cors from 'cors';
 import express, { json } from 'express';
 import { initDatabase } from './application.database.js';
-import { errorRouter } from './routes/router.404.js';
-import { projectRouter } from './routes/router.projects.js';
-import { taskRouter } from './routes/router.tasks.js';
-import { userRouter } from './routes/router.user.js';
+import { errorRouter } from './routes/404.routes.js';
+import { projectRouter } from './routes/project.routes.js';
+import { taskRouter } from './routes/tasks.routes.js';
+import { userRouter } from './routes/users.routes.js';
 
 const createApp = ():express.Application => {
   const app = express();
