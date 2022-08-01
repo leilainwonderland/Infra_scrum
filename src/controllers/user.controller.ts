@@ -88,6 +88,10 @@ const allUsers = async (req: Request, res: Response) => {
       'users.email',
       'users.name',
       'users.lastName',
+      'users.city',
+      'users.tel',
+      'users.img',
+      'users.role',
     ])
     .getMany();
   return res.status(200).json({ users });
