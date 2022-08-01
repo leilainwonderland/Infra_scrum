@@ -7,6 +7,7 @@ const userRouter: Router = Router();
 userRouter.post('/newUser', newUser);
 userRouter.post('/login', login);
 userRouter.get('/userHome', authorized, getDataUser);
+
 userRouter.patch('/home/updateUser', authorized, updateUser);
 // userRouter.delete('/home/delete_profile', authorized, deleteUser);
 userRouter.delete('/deleteUserForProject/:id', authorized, deleteUserForProject);
