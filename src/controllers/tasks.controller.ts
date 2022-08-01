@@ -1,26 +1,15 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { JwtPayload } from 'jsonwebtoken';
-import { decode } from 'jsonwebtoken';
 import { projectRepository, tasksRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../middlewares/error.middleware.js';
 import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
-const addTask = async (req: Request, res: Response, next:NextFunction) => {
-  const token = req.headers.authorization!.split(' ')[1];
-  const userId = await ((decode(token) as JwtPayload).data);
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where('user.id = :id', { id: userId })
-    .getOne();
-  req.body.users = [user];
-  const project = await projectRepository
-    .createQueryBuilder('project')
-    .where('project.id = :id', { id: req.params.id })
-    .getOne();
+const addTasks = async (req: Request, res: Response, next:NextFunction) => {
+  const projectId = req.body.project;
+  const project = await projectRepository.findOneBy({ id: projectId });
+  req.body.project = project;
   if (project !== null) {
     try {
-      req.body.project = project.id; // TMP
       const task = tasksRepository.create(req.body);
       await tasksRepository.save(task);
       return res.status(201).json({ status: 'OK' });
@@ -32,18 +21,18 @@ const addTask = async (req: Request, res: Response, next:NextFunction) => {
   return next(err);
 };
 
-const deleteTask = async (req: Request, res: Response, next:NextFunction) => {
-  if (Object.keys(req.params).length !== 0) {
-    const task = await tasksRepository
-      .createQueryBuilder('task')
-      .where('task.id = :id', { id: req.params.id })
-      .getOne();
-    await tasksRepository.delete(task!.id);
-    return res.status(200).json({ status: 'OK' });
+const deleteTasks = async (req: Request, res: Response, next:NextFunction) => {
+  console.log('deleteTasks');
+  try {
+    if (Object.keys(req.body).length !== 0) {
+      const task = await tasksRepository.findOneBy({ id: req.body.id });
+      await tasksRepository.softDelete(task!.id);
+      return res.status(200).json({ status: 'OK' });
+    }
+  } catch (e) {
+    ifError('Bad Request', 400);
+    return next(err);
   }
-
-  ifError('Bad Request', 400);
-  return next(err);
 };
 
 const patchTask = async (req: Request, res: Response, next: NextFunction) => {
@@ -113,36 +102,13 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getTaskByProject = async (req: Request, res: Response) => {
-  const project = await projectRepository
-    .createQueryBuilder('project')
-    .where('project.id = :id', { id: req.params.id })
-    .leftJoinAndSelect('project.tasks', 'tasks')
-    .getMany()
-  ;
-  return res.status(200).json({ project });
-};
-
-const getTaskByUser = async (req: Request, res: Response) => {
-  const token = req.headers.authorization!.split(' ')[1];
-  const userId = await ((decode(token) as JwtPayload).data);
-
+  console.log('getTask');
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
-    .leftJoinAndSelect('tasks.project', 'project')
-    .leftJoinAndSelect('project.userCreator', 'userCreator')
-    .leftJoinAndSelect('tasks.users', 'users')
-    .where('users.id =:id', { id: userId })
+    .where('tasks.projectId = :id', { id: req.body.id })
     .getMany()
   ;
-  console.log(tasks);
-
   return res.status(200).json({ tasks });
 };
 
-<<<<<<< HEAD
-const getTaskByUser = async (req: Request, res: Response) => {};
-
 export { addTasks, deleteTasks, patchTask, getTaskByProject, getTaskByUser };
-=======
-export { addTask, deleteTask, patchTask, getTaskByProject, getTaskByUser };
->>>>>>> feature/leila
