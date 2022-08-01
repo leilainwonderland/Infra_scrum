@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { JwtPayload } from 'jsonwebtoken';
 import { decode } from 'jsonwebtoken';
 import { projectRepository, userRepository } from '../application.database.js';
-import { err, ifError } from '../middlewares/error.middleware.js';
+import { err, ifError } from '../helpers/error.helpers.js';
 import { Project } from '../models/projects.model.js';
 import type { User } from '../models/users.model.js';
 
@@ -50,6 +50,7 @@ const getProject = async (req: Request, res:Response) => {
     .createQueryBuilder('project')
     .leftJoinAndSelect('project.userCreator', 'userCreator')
     .leftJoinAndSelect('project.users', 'users')
+    .leftJoinAndSelect('project.tasks', 'tasks')
     .where('users.id = :id', { id: userId })
     .getMany();
   return res.status(200).json(project);

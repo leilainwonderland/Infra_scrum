@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { JwtPayload } from 'jsonwebtoken';
 import { userRepository } from '../application.database.js';
-import { err, ifError } from '../middlewares/error.middleware.js';
+import { err, ifError } from '../helpers/error.helpers.js';
 import pkg from 'jsonwebtoken';
 const { sign, decode } = pkg;
 

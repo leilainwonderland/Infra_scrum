@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
-import { err, ifError } from '../middlewares/error.middleware.js';
+import { err, ifError } from '../helpers/error.helpers.js';
 
 const errorRouter: Router = Router();
 

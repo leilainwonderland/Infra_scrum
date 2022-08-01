@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import pkg from 'jsonwebtoken';
-import { err, ifError } from './error.middleware.js';
+import { err, ifError } from '../helpers/error.helpers.js';
 const { verify } = pkg;
 
 const authorized = async (req: Request, res: Response, next: NextFunction) => {
