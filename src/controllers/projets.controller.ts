@@ -46,22 +46,26 @@ const deleteProject = async (req: Request, res:Response, next:NextFunction) => {
 const getProject = async (req: Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
   const userId = await ((decode(token) as JwtPayload).data);
-  const project = await projectRepository
-    .createQueryBuilder('project')
-    .where((qb) => {
-      const subQuery = qb
-        .subQuery()
-        .select('projects.id')
-        .from(User, 'user')
-        .leftJoin('user.projects', 'projects')
-        .where('user.id = :id', { id: userId })
-        .getQuery();
-      return 'project.id IN ' + subQuery;
-    })
-    .leftJoinAndSelect('project.users', 'users')
-    .leftJoinAndSelect('project.users', 'users')
-    .getMany();
-  return res.status(200).json(project);
+  try {
+    const project = await projectRepository
+      .createQueryBuilder('project')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('projects.id')
+          .from(User, 'user')
+          .leftJoin('user.projects', 'projects')
+          .where('user.id = :id', { id: userId })
+          .getQuery();
+        return 'project.id IN ' + subQuery;
+      })
+      .leftJoinAndSelect('project.users', 'users')
+      .leftJoinAndSelect('project.userCreator', 'userCreator')
+      .getMany();
+    return res.status(200).json(project);
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const patchProject = async (req: Request, res:Response, next:NextFunction) => {
