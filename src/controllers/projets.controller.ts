@@ -4,7 +4,7 @@ import { decode } from 'jsonwebtoken';
 import { projectRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../helpers/error.helpers.js';
 import { Project } from '../models/projects.model.js';
-import type { User } from '../models/users.model.js';
+import { User } from '../models/users.model.js';
 
 const addproject = async (req:Request, res:Response) => {
   const token = req.headers.authorization!.split(' ')[1];
@@ -48,10 +48,18 @@ const getProject = async (req: Request, res:Response) => {
   const userId = await ((decode(token) as JwtPayload).data);
   const project = await projectRepository
     .createQueryBuilder('project')
-    .leftJoinAndSelect('project.userCreator', 'userCreator')
+    .where((qb) => {
+      const subQuery = qb
+        .subQuery()
+        .select('projects.id')
+        .from(User, 'user')
+        .leftJoin('user.projects', 'projects')
+        .where('user.id = :id', { id: userId })
+        .getQuery();
+      return 'project.id IN ' + subQuery;
+    })
     .leftJoinAndSelect('project.users', 'users')
-    .leftJoinAndSelect('project.tasks', 'tasks')
-    .where('users.id = :id', { id: userId })
+    .leftJoinAndSelect('project.users', 'users')
     .getMany();
   return res.status(200).json(project);
 };
@@ -70,24 +78,21 @@ const patchProject = async (req: Request, res:Response, next:NextFunction) => {
       .where('projects.id = :id', { id: req.params.id })
       .select('user.id')
       .getMany();
-
     for (const key of lastUsers) {
-      req.body.users.push(key.id);
+      if (req.body.users.includes(!key.id)) {
+        req.body.users.push(key.id);
+      }
     }
-
-    const arrayUsers: User[] = [];
+    const arrayUsers: User[] = req.body.users;
     for (let key of req.body.users) {
       // key = chaques valeurs contenu dans req.body.user
       key = await userRepository
         .createQueryBuilder('users')
         .where('users.id = :id', { id: key })
         .getOne();
-
-      // on vient ajouter à arrayUsers les Repository des users
-      arrayUsers.push(key);
     }
     // Je ne sais plus, sorry. :(
-    req.body.users = arrayUsers;
+    // req.body.users = arrayUsers;
 
     const oldProject = await projectRepository
       .createQueryBuilder('project')
