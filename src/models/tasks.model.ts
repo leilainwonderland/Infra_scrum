@@ -19,10 +19,10 @@ public status?: string;
     public priority!: string;
 
     @Column()
-    public startDate!: string;
+    public startDate!: Date;
 
     @Column()
-    public endDate!: string;
+    public endDate!: Date;
 
     @Column()
     public roles!: string;

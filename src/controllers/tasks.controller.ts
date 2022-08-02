@@ -7,8 +7,8 @@ import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
 const addTasks = async (req: Request, res: Response, next:NextFunction) => {
-  const projectId = req.body.project;
-  const project = await projectRepository.findOneBy({ id: projectId });
+  const projectId = req.params.id;
+  const project = await projectRepository.findOneBy({ id: parseInt(projectId) });
   req.body.project = project;
   if (project !== null) {
     try {
@@ -107,7 +107,7 @@ const getTaskByProject = async (req: Request, res: Response) => {
   console.log('getTask');
   const tasks = await tasksRepository
     .createQueryBuilder('tasks')
-    .where('tasks.projectId = :id', { id: req.body.id })
+    .where('tasks.projectId = :id', { id: req.params.id })
     .getMany()
   ;
   return res.status(200).json({ tasks });
