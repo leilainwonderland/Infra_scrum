@@ -53,37 +53,6 @@ const getProject = async (req: Request, res:Response) => {
     .leftJoinAndSelect('project.tasks', 'tasks')
     .where('users.id = :id', { id: userId })
     .getMany();
-  // const projects = projectsById.leftJoinAndSelect
-  //   .leftJoinAndSelect('project.users', 'users');
-
-  // const qbUsers = await userRepository
-  //   .createQueryBuilder('user')
-  //   .leftJoinAndSelect('user.projects', 'projects')
-  //   .where('user.id = :id', { id: userId })
-  //   .select('projects.id');
-
-  // const projects = await projectRepository
-  //   .createQueryBuilder('project')
-  //   .leftJoinAndSelect('project.users', 'users')
-  //   .where('project.id IN (' + qbUsers.getQuery() + ')').getMany();
-
-  // const projects = subQb.getMany();
-  // const projects = qb
-  //   .leftJoinAndSelect('project.users', 'users')
-  //   .where()
-  // const posts = await qb
-  //     .where(
-  //         "post.title IN " +
-  //             qb
-  //                 .subQuery()
-  //                 .select("usr.name")
-  //                 .from(User, "usr")
-  //                 .where("usr.registered = :registered")
-  //                 .getQuery(),
-  //     )
-  //     .setParameter("registered", true)
-  //     .orderBy("post.id")
-  //     .getMany()
   return res.status(200).json(project);
 };
 
