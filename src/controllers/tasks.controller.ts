@@ -40,7 +40,7 @@ const deleteTasks = async (req: Request, res: Response, next:NextFunction) => {
 const patchTask = async (req: Request, res: Response, next: NextFunction) => {
   // si req.body.users existe, on vient boucler dedans pour récupérer les utilisateurs
   if (req.body.users) {
-  // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
+    // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
     const lastUsers = await userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.tasks', 'tasks')
@@ -57,7 +57,7 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
 
     const arrayUsers: User[] = [];
     for (let key of req.body.users) {
-      // key = chaques valeurs contenu dans req.body.user
+    // key = chaques valeurs contenu dans req.body.user
       key = await userRepository
         .createQueryBuilder('users')
         .where('users.id = :id', { id: key })
@@ -124,7 +124,7 @@ const getTaskByUser = async (req: Request, res: Response) => {
     .leftJoinAndSelect('tasks.users', 'users')
     .where('users.id =:id', { id: userId })
     .getMany()
-  ;
+    ;
   return res.status(200).json({ tasks });
 };
 

@@ -64,14 +64,6 @@ const updateUser = async (req: Request, res: Response) => {
   return res.status(200).json({ status: 'OK' });
 };
 
-const deleteUserForProject = async (req: Request, res: Response) => {
-  console.log('deleteUserForProject');
-};
-
-const deleteUserForTask = async (req: Request, res: Response) => {
-  console.log('deleteUserForTask');
-};
-
 const allUsers = async (req: Request, res: Response) => {
   console.log('allUsers');
   const users = await userRepository
@@ -90,4 +82,4 @@ const allUsers = async (req: Request, res: Response) => {
   return res.status(200).json({ users });
 };
 
-export { newUser, login, getDataUser, updateUser, deleteUserForProject, deleteUserForTask, allUsers };
+export { newUser, login, getDataUser, updateUser, allUsers };
