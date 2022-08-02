@@ -51,10 +51,11 @@ const patchTask = async (req: Request, res: Response, next: NextFunction) => {
     // Par défaut les tasks n'on pas de users
     if (lastUsers.length > 0) {
       for (const key of lastUsers) {
-        req.body.users.push(key.id);
+        if (req.body.users.includes(!key.id)) {
+          req.body.users.push(key.id);
+        }
       }
     }
-
     const arrayUsers: User[] = [];
     for (let key of req.body.users) {
     // key = chaques valeurs contenu dans req.body.user
