@@ -52,6 +52,7 @@ const getProject = async (req: Request, res:Response) => {
     .leftJoinAndSelect('project.users', 'users')
     .leftJoinAndSelect('project.tasks', 'tasks')
     .where('users.id = :id', { id: userId })
+    // .having('users.id = :id', { id: userId })
     .getMany();
   return res.status(200).json(project);
 };

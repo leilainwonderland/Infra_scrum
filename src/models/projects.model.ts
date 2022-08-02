@@ -12,13 +12,13 @@ export class Project extends BaseModel {
     public description?: string;
 
   @Column()
-    public startDate!: string;
+    public startDate!: Date;
 
   @Column()
-  public endDate!: string;
+  public endDate!: Date;
 
     @Column()
-  public update!: string;
+  public update!: Date;
 
     @Column()
     public status!: string;
