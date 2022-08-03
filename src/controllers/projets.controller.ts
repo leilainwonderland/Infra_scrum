@@ -82,22 +82,22 @@ const patchProject = async (req: Request, res:Response, next:NextFunction) => {
       .where('projects.id = :id', { id: req.params.id })
       .select('user.id')
       .getMany();
+
     for (const key of lastUsers) {
       if (req.body.users.includes(!key.id)) {
         req.body.users.push(key.id);
       }
-    }
-    const arrayUsers: User[] = req.body.users;
+    }req.body.users.push(userId);
+    const arrayUsers: User[] = []; // User
     for (let key of req.body.users) {
-      // key = chaques valeurs contenu dans req.body.user
+      // key = chaques valeurs contenu dans req.body.users
       key = await userRepository
         .createQueryBuilder('users')
         .where('users.id = :id', { id: key })
         .getOne();
+      arrayUsers.push(key);
     }
-    // Je ne sais plus, sorry. :(
-    // req.body.users = arrayUsers;
-
+    req.body.users = arrayUsers;
     const oldProject = await projectRepository
       .createQueryBuilder('project')
       .where('project.id = :id', { id: req.params.id })
@@ -110,7 +110,7 @@ const patchProject = async (req: Request, res:Response, next:NextFunction) => {
         .relation(Project, 'users')
         // le project que l'on vient update
         .of(oldProject)
-        // remplace oldProject.users par arrayUsers
+      // remplace oldProject.users par arrayUsers
         .addAndRemove(arrayUsers, oldProject?.users);
       return res.status(201).json({ status: 'OK' });
     } catch (e) {
