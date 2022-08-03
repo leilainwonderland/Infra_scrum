@@ -87,7 +87,8 @@ const patchProject = async (req: Request, res:Response, next:NextFunction) => {
       if (req.body.users.includes(!key.id)) {
         req.body.users.push(key.id);
       }
-    }req.body.users.push(userId);
+    }
+    // req.body.users.push(userId);
     const arrayUsers: User[] = []; // User
     for (let key of req.body.users) {
       // key = chaques valeurs contenu dans req.body.users
