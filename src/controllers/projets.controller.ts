@@ -3,6 +3,7 @@ import type { JwtPayload } from 'jsonwebtoken';
 import { decode } from 'jsonwebtoken';
 import { projectRepository, userRepository } from '../application.database.js';
 import { err, ifError } from '../helpers/error.helpers.js';
+import { Project } from '../models/projects.model.js';
 import { User } from '../models/users.model.js';
 
 const addproject = async (req:Request, res:Response) => {
@@ -74,61 +75,48 @@ const patchProject = async (req: Request, res:Response, next:NextFunction) => {
 
   // // si req.body.users existe, on vient boucler dedans pour récupérer les utilisateurs
   if (req.body.users) {
-    // let saved = await projectRepository.preload({
-    //   ...req.body,
-    //   ...{ id: req.params.id },
-    // });
+    // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
+    const lastUsers = await userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.projects', 'projects')
+      .where('projects.id = :id', { id: req.params.id })
+      .select('user.id')
+      .getMany();
 
-    // if (saved === undefined) {
-    //   ifError('NotFound', 404);
-    //   return next(err);
-    // }
-    // saved = await projectRepository.save(saved);
-
-    // return res.status(201).json({ status: 'OK' });
-    /* ------------------------------------ x ----------------------------------- */
-    //   // si les anciennes valeurs ne sont pas ajouté la requête elles seront écrasées
-    //   const lastUsers = await userRepository
-    //     .createQueryBuilder('user')
-    //     .leftJoinAndSelect('user.projects', 'projects')
-    //     .where('projects.id = :id', { id: req.params.id })
-    //     .select('user.id')
-    //     .getMany();
-
-  //   for (const key of lastUsers) {
-  //     if (req.body.users.includes(!key.id)) {
-  //       req.body.users.push(key.id);
-  //     }
-    // }
-  //   // req.body.users.push(userId);
-  //   const arrayUsers: User[] = []; // User
-  //   for (let key of req.body.users) {
-  //     // key = chaques valeurs contenu dans req.body.users
-  //     key = await userRepository
-  //       .createQueryBuilder('users')
-  //       .where('users.id = :id', { id: key })
-  //       .getOne();
-  //     arrayUsers.push(key);
-  //   }
-  //   req.body.users = arrayUsers;
-  //   const oldProject = await projectRepository
-  //     .createQueryBuilder('project')
-  //     .where('project.id = :id', { id: req.params.id })
-  //     .leftJoinAndSelect('project.users', 'users')
-  //     .getOne();
-  //   try {
-  //     await projectRepository
-  //       .createQueryBuilder('project')
-  //     // la relation que l'on vient update
-  //       .relation(Project, 'users')
-  //     // le project que l'on vient update
-  //       .of(oldProject)
-  //       // remplace oldProject.users par arrayUsers
-  //       .addAndRemove(arrayUsers, oldProject?.users);
-  //     return res.status(201).json({ status: 'OK' });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
+    for (const key of lastUsers) {
+      if (req.body.users.includes(!key.id)) {
+        req.body.users.push(key.id);
+      }
+    }
+    // req.body.users.push(userId);
+    const arrayUsers: User[] = []; // User
+    for (let key of req.body.users) {
+      // key = chaques valeurs contenu dans req.body.users
+      key = await userRepository
+        .createQueryBuilder('users')
+        .where('users.id = :id', { id: key })
+        .getOne();
+      arrayUsers.push(key);
+    }
+    req.body.users = arrayUsers;
+    const oldProject = await projectRepository
+      .createQueryBuilder('project')
+      .where('project.id = :id', { id: req.params.id })
+      .leftJoinAndSelect('project.users', 'users')
+      .getOne();
+    try {
+      await projectRepository
+        .createQueryBuilder('project')
+      // la relation que l'on vient update
+        .relation(Project, 'users')
+      // le project que l'on vient update
+        .of(oldProject)
+        // remplace oldProject.users par arrayUsers
+        .addAndRemove(arrayUsers, oldProject?.users);
+      return res.status(201).json({ status: 'OK' });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   if (req.body.users === undefined) {
