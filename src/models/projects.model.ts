@@ -31,13 +31,13 @@ export class Project extends BaseModel {
 
   @ManyToMany(() => User, user => user.projects, {
     cascade: true,
-    eager: true,
   })
   @JoinTable(
     { name: 'users_projects' },
   )
   public users?: User[];
 
-  @OneToMany(() => Tasks, tasks => tasks.project)
+  @OneToMany(() => Tasks, tasks => tasks.project, {
+  })
   public tasks?: Tasks[];
 }
