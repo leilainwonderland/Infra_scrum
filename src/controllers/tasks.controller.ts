@@ -7,17 +7,17 @@ import { Tasks } from '../models/tasks.model.js';
 import type { User } from '../models/users.model.js';
 
 const addTasks = async (req: Request, res: Response, next:NextFunction) => {
-  const projectId = req.params.id;
-  const project = await projectRepository.findOneBy({ id: parseInt(projectId) });
+  const project = await projectRepository
+    .createQueryBuilder('project')
+    .where('project.id =:id', { id: req.params.id })
+    .getOne();
   req.body.project = project;
-  if (project !== null) {
-    try {
-      const task = tasksRepository.create(req.body);
-      await tasksRepository.save(task);
-      return res.status(201).json({ status: 'OK' });
-    } catch (e) {
-      console.log(e);
-    }
+  try {
+    const task = tasksRepository.create(req.body);
+    await tasksRepository.save(task);
+    return res.status(201).json({ status: 'OK' });
+  } catch (e) {
+    console.log(e);
   }
   ifError('Bad Request', 400);
   return next(err);
@@ -26,11 +26,9 @@ const addTasks = async (req: Request, res: Response, next:NextFunction) => {
 const deleteTasks = async (req: Request, res: Response, next:NextFunction) => {
   console.log('deleteTasks');
   try {
-    if (Object.keys(req.body).length !== 0) {
-      const task = await tasksRepository.findOneBy({ id: req.body.id });
-      await tasksRepository.softDelete(task!.id);
-      return res.status(200).json({ status: 'OK' });
-    }
+    const task = await tasksRepository.findOneBy({ id: parseInt(req.params.id) });
+    await tasksRepository.softDelete(task!.id);
+    return res.status(200).json({ status: 'OK' });
   } catch (e) {
     ifError('Bad Request', 400);
     return next(err);

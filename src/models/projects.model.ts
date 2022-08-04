@@ -31,6 +31,7 @@ export class Project extends BaseModel {
 
   @ManyToMany(() => User, user => user.projects, {
     cascade: true,
+    eager: true,
   })
   @JoinTable(
     { name: 'users_projects' },
