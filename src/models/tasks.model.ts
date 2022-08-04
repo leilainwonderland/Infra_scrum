@@ -6,13 +6,13 @@ import { User } from './users.model.js';
 @Entity()
 
 export class Tasks extends BaseModel {
-@Column('varchar', { length: 35 })
+@Column()
   public name!: string;
 
-  @Column('varchar', { length: 35 })
+  @Column()
 public status?: string;
 
-    @Column('varchar', { length: 250 })
+    @Column()
   public description?: string;
 
     @Column()
