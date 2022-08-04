@@ -34,7 +34,7 @@ const deleteProject = async (req: Request, res:Response, next:NextFunction) => {
       .leftJoinAndSelect('project.userCreator', 'userCreator')
       .getOne();
     if (project?.userCreator.id === userId) {
-      await projectRepository.delete(project!.id);
+      await projectRepository.softDelete(project!.id);
       return res.status(200).json({ status: 'OK' });
     }
   } catch (e) {

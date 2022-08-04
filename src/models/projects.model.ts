@@ -37,7 +37,6 @@ export class Project extends BaseModel {
   )
   public users?: User[];
 
-  @OneToMany(() => Tasks, tasks => tasks.project, {
-  })
+  @OneToMany(() => Tasks, tasks => tasks.project)
   public tasks?: Tasks[];
 }

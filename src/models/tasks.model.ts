@@ -27,8 +27,9 @@ public status?: string;
     @Column()
     public roles!: string;
 
-   @ManyToOne('Project', 'tasks')
-
+   @ManyToOne('Project', 'tasks', {
+     cascade: true,
+   })
     public project!: Project;
 
     @ManyToMany(() => User, user => user.tasks, {
